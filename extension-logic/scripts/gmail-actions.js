@@ -9,10 +9,12 @@ const SLEEP_TIME_MS = 4000;
 // dictionary for DOM elements
 const DOM_MAP = {
 	topLevelTable: '.F.cf.zt',
-	emailSpan: 'span.T-KT.aXw',
+	unreadEmail: 'tr.zE',
+	iconTd: '.apU.xY',
+	idTd: '.yX.xY',
+	emailIconSpan: 'span.T-KT.aXw',
 	iconToRemove: 'aXw',
-	iconToAdd: 'T-KT-Jp-ext',
-	unreadEmail: 'tr.zE'
+	iconToAdd: 'T-KT-Jp-ext'
 };
 
 
@@ -44,7 +46,36 @@ function debugLog(message, logAsString=true) {
     }
 }
 
+// helper function to generate the below struct for a given email
+// {
+//		emailId: <id>,
+//		emailSubject: <from>,
+//		emailIconSpan: <iconSpan>,
+//		emailContent: <content>
+// }
+function parseEmailHelper(email) {
+	const tempSpan = email.querySelector('span[data-thread-id]');
+	const emailId = tempSpan.getAttribute('data-thread-id');
+	const emailSubject = tempSpan.textContent;
+	const emailIconSpan = email.querySelector(DOM_MAP.emailIconSpan);
 
+	const struct = {
+		emailId: emailId,
+		emailSubject: emailSubject,
+		emailIconSpan: emailIconSpan,
+		emailContent: ""
+	};
+	return struct;
+}
+
+// helper function to structure email metadata
+function parseEmails(emails) {
+	var structs = [];
+	for (var i=0; i<emails.length; i+=1) {
+		structs.push(parseEmailHelper(emails[i]));
+	}
+	return structs;
+}
 
 //// script body
 
@@ -54,7 +85,7 @@ function debugLog(message, logAsString=true) {
 // the injected HTML (i.e highlights) if we don't wait a few seconds
 async function scanEmails() {
 
-	// wait for GMail to finish loading before marking/highlighting emails
+	// wait for Gmail to finish loading before marking/highlighting emails
 	debugLog("Sleeping....");
     await sleepHelper(SLEEP_TIME_MS);
 	debugLog("Done sleeping....");
@@ -65,27 +96,30 @@ async function scanEmails() {
 	debugLog(table, false);
 
 	if (table) {
+		// Search for unread emails
 		var unreadEmails = table.querySelectorAll(DOM_MAP.unreadEmail);
 		debugLog("Unread emails");
 		debugLog(unreadEmails, false);
 
 		// if no unread emails are found, end execution
 		if(!unreadEmails) return;
-	
-		var spans = [];
-		unreadEmails.forEach(email => {
-			spans.push(email.querySelector(DOM_MAP.emailSpan));
-		});
-		spans = enforceEmailLimit(spans);
-		debugLog("Spans (containing unread emails) found");
-		debugLog(spans, false);
 
-		spans.forEach(span => {
-			span.classList.remove(DOM_MAP.iconToRemove);
-			span.classList.add(DOM_MAP.iconToAdd);
+		// limit number of emails to be processed
+		unreadEmails = enforceEmailLimit(unreadEmails);
+		debugLog("Unread emails after limiting");
+		debugLog(unreadEmails, false);
+
+		// structure found emails for further processing
+		const emailsStruct = parseEmails(unreadEmails);
+		debugLog("Unread emails after structuring");
+		debugLog(emailsStruct, false);
+
+
+		// highlight emails
+		emailsStruct.forEach(email => {
+			email.emailIconSpan.classList.remove(DOM_MAP.iconToRemove);
+			email.emailIconSpan.classList.add(DOM_MAP.iconToAdd);
 		});	
-		debugLog("Spans (containing unread emails) modified");
-		debugLog(spans, false);
 	}	
 
 }
@@ -108,4 +142,5 @@ style.textContent = `
 // inject custom style into document
 document.head.appendChild(style);
 
+// execute logic
 scanEmails();
