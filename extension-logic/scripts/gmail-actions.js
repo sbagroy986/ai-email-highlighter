@@ -6,6 +6,13 @@ const DEBUG_MODE = true;
 const LOG_PREFIX = "[Extension Log] ";
 // time to sleep
 const SLEEP_TIME_MS = 3500;
+// dictionary for DOM elements
+const DOM_MAP = {
+	topLevelTable: '.F.cf.zt',
+	emailSpan: 'span.T-KT.aXw',
+	iconToRemove: 'aXw',
+	iconToAdd: 'T-KT-Jp-ext',
+};
 
 
 
@@ -52,18 +59,18 @@ async function scanEmails() {
 	debugLog("Done sleeping....");
 
 	// find parent table DOM elements for emails to mark
-	const table = document.querySelector('.F.cf.zt'); // TO-DO: rewrite this to read id classes from a locale file
+	const table = document.querySelector(DOM_MAP.topLevelTable);
 	debugLog("Table found: " + table);
 
 	if (table) {
-		var spans = table.querySelectorAll('span.T-KT.aXw'); // TO-DO: rewrite this to read id classes from a locale file
+		var spans = table.querySelectorAll(DOM_MAP.emailSpan);
 		spans = enforceEmailLimit(spans);
 		debugLog("Spans (containing emails) found");
 		debugLog(spans, false);
 
 		spans.forEach(span => {
-			span.classList.remove('aXw');
-			span.classList.add('T-KT-Jp-ext');
+			span.classList.remove(DOM_MAP.iconToRemove);
+			span.classList.add(DOM_MAP.iconToAdd);
 		});	
 		debugLog("Spans (containing emails) modified");
 		debugLog(spans, false);
