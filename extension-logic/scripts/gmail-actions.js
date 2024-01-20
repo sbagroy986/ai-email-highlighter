@@ -5,7 +5,7 @@ const NUM_EMAILS = 10;
 const DEBUG_MODE = true;
 const LOG_PREFIX = "[Extension Log] ";
 // time to sleep
-const SLEEP_TIME_MS = 3000;
+const SLEEP_TIME_MS = 3500;
 
 
 
@@ -63,7 +63,7 @@ async function scanEmails() {
 
 		spans.forEach(span => {
 			span.classList.remove('aXw');
-			span.classList.add('T-KT-Jp');
+			span.classList.add('T-KT-Jp-ext');
 		});	
 		debugLog("Spans (containing emails) modified");
 		debugLog(spans, false);
@@ -72,11 +72,14 @@ async function scanEmails() {
 }
 
 
+// get URL for icon to inject
+var iconPath = chrome.runtime.getURL('images/email-highlight-icon.png');
+
 // style to inject
 const style = document.createElement('style');
 style.textContent = `
-	T-KT.T-KT-Jp-ext::before {
-	    background-image: url(images/email-highlight-icon.png);
+	.T-KT.T-KT-Jp-ext::before {
+	    background-image: url(`+ iconPath +`);
 	    background-position: center;
 	    background-repeat: no-repeat;
 	    background-size: 20px;
