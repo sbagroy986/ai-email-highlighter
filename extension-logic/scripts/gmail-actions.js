@@ -4,6 +4,8 @@ const NUM_EMAILS = 10;
 // set debug mode to enable/disable logging
 const DEBUG_MODE = true;
 const LOG_PREFIX = "[Extension Log] ";
+// time to sleep
+const SLEEP_TIME_MS = 3000;
 
 
 
@@ -46,7 +48,7 @@ async function scanEmails() {
 
 	// wait for GMail to finish loading before marking/highlighting emails
 	debugLog("Sleeping....");
-    await sleepHelper(10000);
+    await sleepHelper(SLEEP_TIME_MS);
 	debugLog("Done sleeping....");
 
 	// find parent table DOM elements for emails to mark
