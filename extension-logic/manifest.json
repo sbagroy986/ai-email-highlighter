@@ -9,10 +9,18 @@
   },
   "content_scripts": [
     {
-      "js": ["scripts/gmail-actions.js"],
-      "matches": [
-        "https://mail.google.com/*"
-      ]
+		"js": ["scripts/gmail-actions.js"],
+		"matches": [
+	 		"https://mail.google.com/*"
+		]
+    }
+  ],
+ "web_accessible_resources": [
+ 	{
+	    "resources": ["images/email-highlight-icon.png"],
+	    "matches":  [
+	    	"https://mail.google.com/*"
+	    ]
     }
   ]  
 }

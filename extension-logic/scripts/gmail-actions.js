@@ -76,7 +76,7 @@ async function scanEmails() {
 const style = document.createElement('style');
 style.textContent = `
 	T-KT.T-KT-Jp-ext::before {
-	    background-image: url(//ssl.gstatic.com/ui/v1/icons/mail/gm3/2x/star_fill_googyellow500_20dp.png);
+	    background-image: url(images/email-highlight-icon.png);
 	    background-position: center;
 	    background-repeat: no-repeat;
 	    background-size: 20px;
