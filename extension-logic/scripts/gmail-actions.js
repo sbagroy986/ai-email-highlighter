@@ -14,9 +14,40 @@ function enforceEmailLimit(emails) {
 	return filteredNodeList;
 };
 
+// helper function to implement sleep() in JS
+function sleepHelper(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
 
 //// script body
+
+// main function that scans emails and highlights the "important" ones
+// needs to be an async function because we need to introduce a delay between extension load
+// and logic execution; gmail takes a few seconds to load UI elements and ends up over-writing
+// the injected HTML (i.e highlights) if we don't wait a few seconds
+async function scanEmails() {
+
+	// find parent table DOM elements for emails to mark
+	const table = document.querySelector('.F.cf.zt'); // TO-DO: rewrite this to read id classes from a locale file
+
+	if (table) {
+		var spans = table.querySelectorAll('span.T-KT.aXw'); // TO-DO: rewrite this to read id classes from a locale file
+		spans = enforceEmailLimit(spans);
+
+		// wait for GMail to finish loading before marking/highlighting emails
+	    await sleepHelper(10000);
+
+		spans.forEach(span => {
+			span.classList.remove('aXw');
+			span.classList.add('T-KT-Jp');
+		});	
+	}	
+
+}
+
+
 // style to inject
 const style = document.createElement('style');
 style.textContent = `
@@ -31,18 +62,4 @@ style.textContent = `
 // inject custom style into document
 document.head.appendChild(style);
 
-// parent table with all emails
-// find DOM elements for emails to mark
-const table = document.querySelector('.F.cf.zt'); // TO-DO: rewrite this to read id classes from a locale file
-
-
-if (table) {
-	var spans = table.querySelectorAll('span.T-KT.aXw'); // TO-DO: rewrite this to read id classes from a locale file
-	spans = enforceEmailLimit(spans);
-
-	spans.forEach(span => {
-		span.classList.remove('aXw');
-		span.classList.add('T-KT-Jp');
-	});	
-
-}
+scanEmails();
