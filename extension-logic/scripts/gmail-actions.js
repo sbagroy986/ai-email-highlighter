@@ -5,13 +5,14 @@ const NUM_EMAILS = 10;
 const DEBUG_MODE = true;
 const LOG_PREFIX = "[Extension Log] ";
 // time to sleep
-const SLEEP_TIME_MS = 3500;
+const SLEEP_TIME_MS = 4000;
 // dictionary for DOM elements
 const DOM_MAP = {
 	topLevelTable: '.F.cf.zt',
 	emailSpan: 'span.T-KT.aXw',
 	iconToRemove: 'aXw',
 	iconToAdd: 'T-KT-Jp-ext',
+	unreadEmail: 'tr.zE'
 };
 
 
@@ -20,7 +21,7 @@ const DOM_MAP = {
 // limit the number of emails to operate on
 function enforceEmailLimit(emails) {
 	var filteredNodeList = [];
-	for (var i=0; i<NUM_EMAILS; i+=1) {
+	for (var i=0; (i<NUM_EMAILS)&&(i<emails.length); i+=1) {
 		filteredNodeList.push(emails[i]);
 	}
 	return filteredNodeList;
@@ -60,19 +61,30 @@ async function scanEmails() {
 
 	// find parent table DOM elements for emails to mark
 	const table = document.querySelector(DOM_MAP.topLevelTable);
-	debugLog("Table found: " + table);
+	debugLog("Table found ");
+	debugLog(table, false);
 
 	if (table) {
-		var spans = table.querySelectorAll(DOM_MAP.emailSpan);
+		var unreadEmails = table.querySelectorAll(DOM_MAP.unreadEmail);
+		debugLog("Unread emails");
+		debugLog(unreadEmails, false);
+
+		// if no unread emails are found, end execution
+		if(!unreadEmails) return;
+	
+		var spans = [];
+		unreadEmails.forEach(email => {
+			spans.push(email.querySelector(DOM_MAP.emailSpan));
+		});
 		spans = enforceEmailLimit(spans);
-		debugLog("Spans (containing emails) found");
+		debugLog("Spans (containing unread emails) found");
 		debugLog(spans, false);
 
 		spans.forEach(span => {
 			span.classList.remove(DOM_MAP.iconToRemove);
 			span.classList.add(DOM_MAP.iconToAdd);
 		});	
-		debugLog("Spans (containing emails) modified");
+		debugLog("Spans (containing unread emails) modified");
 		debugLog(spans, false);
 	}	
 
