@@ -1,6 +1,9 @@
 //// helper variables
 //limit marking to a constant number of emails
 const NUM_EMAILS = 10;
+// set debug mode to enable/disable logging
+const DEBUG_MODE = true;
+const LOG_PREFIX = "[Extension Log] ";
 
 
 
@@ -19,6 +22,18 @@ function sleepHelper(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// helper function to show/hide logs based on debugging mode
+function debugLog(message, logAsString=true) {
+    if (DEBUG_MODE) {
+    	if (logAsString) {
+	        console.log(LOG_PREFIX + message);
+    	} else {
+    		console.log(message);
+    		console.log("\n");
+    	}
+    }
+}
+
 
 
 //// script body
@@ -29,20 +44,27 @@ function sleepHelper(ms) {
 // the injected HTML (i.e highlights) if we don't wait a few seconds
 async function scanEmails() {
 
+	// wait for GMail to finish loading before marking/highlighting emails
+	debugLog("Sleeping....");
+    await sleepHelper(10000);
+	debugLog("Done sleeping....");
+
 	// find parent table DOM elements for emails to mark
 	const table = document.querySelector('.F.cf.zt'); // TO-DO: rewrite this to read id classes from a locale file
+	debugLog("Table found: " + table);
 
 	if (table) {
 		var spans = table.querySelectorAll('span.T-KT.aXw'); // TO-DO: rewrite this to read id classes from a locale file
 		spans = enforceEmailLimit(spans);
-
-		// wait for GMail to finish loading before marking/highlighting emails
-	    await sleepHelper(10000);
+		debugLog("Spans (containing emails) found");
+		debugLog(spans, false);
 
 		spans.forEach(span => {
 			span.classList.remove('aXw');
 			span.classList.add('T-KT-Jp');
 		});	
+		debugLog("Spans (containing emails) modified");
+		debugLog(spans, false);
 	}	
 
 }
