@@ -5,6 +5,14 @@
   "version": "1.0",
   "action": {
     "default_popup": "hello-world.html",
-    "default_icon": "./assets/img/logo.png"
-  }
+    "default_icon": "images/logo.png"
+  },
+  "content_scripts": [
+    {
+      "js": ["scripts/content.js"],
+      "matches": [
+        "https://mail.google.com/*"
+      ]
+    }
+  ]  
 }
