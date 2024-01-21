@@ -9,14 +9,14 @@
   },
   "content_scripts": [
     {
-  		"js": ["scripts/gmail-actions.js"],
+  		"js": ["scripts/gmailContentScript.js"],
   		"matches": [
   	 		"https://mail.google.com/*"
   		]
     }
   ],
   "background": {
-    "service_worker": "scripts/background-cookie-worker.js",
+    "service_worker": "scripts/backgroundWorker.js",
     "type": "module"
   },
  "web_accessible_resources": [
