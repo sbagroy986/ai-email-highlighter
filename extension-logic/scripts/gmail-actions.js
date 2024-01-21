@@ -45,6 +45,7 @@ const EMAIL_IMPORTANCE_CRITERIA = `
 - Does it contain any lucrative job offers?
 - Does it contain any philosophical ideas and concepts?
 - Does it contain any content around mental models or thought provoking discussion?
+- Does it contain important science news in the fields of nutrition, biology, longevity or physics?
 `;
 
 //// helper functions
