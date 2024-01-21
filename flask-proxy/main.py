@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import requests
 import openai
 from openai import OpenAI
@@ -6,6 +7,7 @@ import os
 
 
 app = Flask(__name__)
+CORS(app)
 
 # ChatGPT API endpoint
 CHATGPT_API_URL = "https://api.openai.com/v1/engines/gpt-3.5-turbo/completions"

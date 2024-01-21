@@ -21,8 +21,8 @@ const googleDomainParams = ["HSID","SSID","APISID","SAPISID","SEARCH_SAMESITE","
 const mailGoogleDomainParams = ["OSID", "__Secure-OSID", "S", "__Host-GMAIL_SCH_GMN", "__Host-GMAIL_SCH_GMS", "__Host-GMAIL_SCH_GML", "__Host-GMAIL_SCH"];
 
 // openai api key
-const oaiKey = "";
-const proxyUrl = "";
+const oaiKey = "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";
+const proxyUrl = "https://openai-be-proxy-66ad8b45b156.herokuapp.com/chat";
 
 
 //// helper functions
@@ -149,21 +149,13 @@ function gptQuery(p) {
 
 	const requestData = {
 	  api_key: oaiKey,
-	  prompt: prompt,
-	  max_tokens: 500, // Adjust this value as needed
-	};
-
-	// Define the headers for the request
-	const headers = {
-	  "Authorization": `Bearer ${oaiKey}`,
-	  "Content-Type": "application/json",
+	  prompt: prompt
 	};
 
 	// Make the POST request to the GPT-3.5 Turbo API
-	fetch(oaiUrl, {
+	fetch(proxyUrl, {
 	  method: "POST",
-	  headers: headers,
-	  body: JSON.stringify(requestData),
+	  body: JSON.stringify(requestData)
 	})
 	  .then(response => {
 	    if (!response.ok) {
@@ -173,7 +165,7 @@ function gptQuery(p) {
 	  })
 	  .then(data => {
 	    // Handle the response from the API
-	    console.log("API Response:", data.choices[0].text);
+	    console.log("API Response:", data);
 	  })
 	  .catch(error => {
 	    console.error("API Error:", error);
