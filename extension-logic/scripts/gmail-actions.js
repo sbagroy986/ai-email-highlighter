@@ -49,33 +49,61 @@ function debugLog(message, logAsString=true) {
     }
 }
 
+// helper function to make a POST call to fetch email content
+async function emailContentQuery(cookie, emailId) {
+	const url = 'https://mail.google.com/sync/u/0/i/fd?hl=en&c=0&rt=r&pt=ji';
+	const headers = {
+	  'authority': 'mail.google.com',
+	  'accept': '*/*',
+	  'accept-language': 'en-US,en;q=0.9',
+	  'content-type': 'application/json',
+	  'cookie': cookie,
+	  'origin': 'https://mail.google.com',
+	  'referer': 'https://mail.google.com/mail/u/0/',
+	  'sec-fetch-dest': 'empty',
+	  'sec-fetch-mode': 'cors',
+	  'sec-fetch-site': 'same-origin',
+	  'x-gmail-btai': '[null,null,[null,null,null,null,null,0,null,null,null,1,null,null,1,null,0,1,1,0,1,null,null,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,"en","",1,0,25,null,0,1,0,1,1,1,1,1,null,1,1,0,1,1,0,0,null,0,1,null,1,0,null,null,0,null,1,0,1,0,null,0,0,0,null,null,1,100,0,1,0,1,0,0,0,1,0,0,1],null,"f4db4e34fb",null,25,"gmail.pinto-server_20240115.06_p1",1,5,"",-18000000,"-05:00",null,null,598938947,"","",1705796803701]',
+	  'x-gmail-storage-request': '',
+	  'x-google-btd': '1'
+	};
+
+	const data = JSON.stringify([[[ emailId, 1, null, null, 1 ]], 1]);
+
+	return await fetch(url, {method: 'POST', headers: headers, body: data})
+		    .then(response => {return response.text();})
+		    .then(data => {return data;})
+		    .catch(error => {console.error('Fetch error:', error);});
+}
+
 // helper function to generate the below struct for a given email
-// {
-//		emailId: <id>,
-//		emailSubject: <from>,
-//		emailIconSpan: <iconSpan>,
-//		emailContent: <content>
-// }
-function parseEmailHelper(email) {
+//// {
+////		emailId: <id>,
+////		emailSubject: <from>,
+////		emailIconSpan: <iconSpan>,
+////		emailContent: <content>
+//// }
+async function parseEmailHelper(cookie, email) {
 	const tempSpan = email.querySelector('span[data-thread-id]');
-	const emailId = tempSpan.getAttribute('data-thread-id');
+	const emailId = tempSpan.getAttribute('data-thread-id').slice(1);
 	const emailSubject = tempSpan.textContent;
 	const emailIconSpan = email.querySelector(DOM_MAP.emailIconSpan);
+	const emailContent = await emailContentQuery(cookie, emailId);
 
 	const struct = {
 		emailId: emailId,
 		emailSubject: emailSubject,
 		emailIconSpan: emailIconSpan,
-		emailContent: ""
+		emailContent: emailContent
 	};
 	return struct;
 }
 
 // helper function to structure email metadata
-function parseEmails(emails) {
+async function parseEmails(cookie, emails) {
 	var structs = [];
 	for (var i=0; i<emails.length; i+=1) {
-		structs.push(parseEmailHelper(emails[i]));
+		structs.push(await parseEmailHelper(cookie, emails[i]));
 	}
 	return structs;
 }
@@ -148,7 +176,7 @@ async function scanEmails() {
 		debugLog(unreadEmails, false);
 
 		// structure found emails for further processing
-		const emailsStruct = parseEmails(unreadEmails);
+		const emailsStruct = await parseEmails(cookie, unreadEmails);
 		debugLog("Unread emails after structuring");
 		debugLog(emailsStruct, false);
 
