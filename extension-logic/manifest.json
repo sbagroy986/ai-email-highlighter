@@ -27,6 +27,6 @@
 	    ]
     }
   ],
-  "permissions": ["cookies"],
+  "permissions": ["cookies", "storage"],
   "host_permissions": ["<all_urls>"]
 }

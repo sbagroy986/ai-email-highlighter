@@ -1,13 +1,85 @@
-<!-- popup.html -->
-
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Extension Popup</title>
-		<script src="scripts/popup.js"></script>
-	</head>
-	<body>
-		<input type="text" id="userInput" placeholder="Enter data">
-		<button id="submitButton">Submit</button>
-	</body>
+
+<head>
+    <script src="scripts/popup.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Email Scanner Config</title>
+    <style>
+        html {
+            width: 400px;
+            background-color: #f0f0f0; /* Neutral background color */
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: left; /* Left-align text */
+        }
+
+        h2 {
+            color: #007BFF;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            color: #333; /* Dark gray text color */
+        }
+
+        input[name="oaiKey"] {
+        	width: 70%;
+        }
+
+        textarea[type="emailCriteria"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff; /* White background */
+            font-size: 12px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff; /* White background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>AI Email Scanner</h2>
+        <p>Configure your API key and highlight criteria below</p>
+        <form id="preferencesForm">
+            <label for="oaiKey">OpenAI Key:</label>
+            <input type="password" id="oaiKey" name="oaiKey" rows="1" value="123456789123456789"/>
+            <label for="preferences">What criteria should highlight an email?</label>
+            <textarea type="emailCriteria" id="userInput" rows="8"> - Does the email refer to a receipt, a billing schedule, a subscription, a bank transfer or any other financially relevant detail? &#10;- Does it contain any lucrative job offers?&#10;- Does it contain any philosophical ideas and concepts?&#10;- Does it contain any content around mental models or thought provoking discussion?&#10;- Does it contain important science news in the fields of nutrition, biology, longevity or physics?
+            </textarea>
+            <button id="submitButton">Save Preferences</button>
+        </form>
+    </div>
+</body>
+
 </html>

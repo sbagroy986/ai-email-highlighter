@@ -22,9 +22,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
   // handle user input message events
   if (request.type === "userInput") {
-    console.log("User input received with data: " + request.data);
+    console.log("User input received with data: " + request.input);
+    chrome.storage.local.set({ userInput: request.input}, function() {
+      console.log('Data stored in chrome.storage');
+    });
   }
 
-    // use async
-    return true;
+  // handle reading stored user input
+  if (request.type === "loadUserPreferences") {
+    chrome.storage.local.get(["userInput"].then((result) => {
+      console.log(result.userInput);
+    })); 
+  }
+
+  // use async
+  return true;
 });
