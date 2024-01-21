@@ -20,6 +20,9 @@ const DOM_MAP = {
 const googleDomainParams = ["HSID","SSID","APISID","SAPISID","SEARCH_SAMESITE","AEC","NID","SID","1P_JAR","SIDCC","__Secure-1PSID","__Secure-3PSID","__Secure-1PAPISID","__Secure-3PAPISID","__Secure-1PSIDTS","__Secure-3PSIDTS","__Secure-1PSIDCC","__Secure-3PSIDCC"];
 const mailGoogleDomainParams = ["OSID", "__Secure-OSID", "S", "__Host-GMAIL_SCH_GMN", "__Host-GMAIL_SCH_GMS", "__Host-GMAIL_SCH_GML", "__Host-GMAIL_SCH"];
 
+// openai api key
+const oaiKey = "";
+const proxyUrl = "";
 
 
 //// helper functions
@@ -139,6 +142,44 @@ async function fetchAndGenerateCookie() {
 	return cookie;
 }
 
+// helper function to query openai
+function gptQuery(p) {
+
+	const prompt = "Translate the following English text to French: 'Hello, how are you?'";
+
+	const requestData = {
+	  api_key: oaiKey,
+	  prompt: prompt,
+	  max_tokens: 500, // Adjust this value as needed
+	};
+
+	// Define the headers for the request
+	const headers = {
+	  "Authorization": `Bearer ${oaiKey}`,
+	  "Content-Type": "application/json",
+	};
+
+	// Make the POST request to the GPT-3.5 Turbo API
+	fetch(oaiUrl, {
+	  method: "POST",
+	  headers: headers,
+	  body: JSON.stringify(requestData),
+	})
+	  .then(response => {
+	    if (!response.ok) {
+	      throw new Error(`HTTP error! Status: ${response.status}`);
+	    }
+	    return response.json();
+	  })
+	  .then(data => {
+	    // Handle the response from the API
+	    console.log("API Response:", data.choices[0].text);
+	  })
+	  .catch(error => {
+	    console.error("API Error:", error);
+	  });	
+}
+
 //// script body
 
 // main function that scans emails and highlights the "important" ones
@@ -185,7 +226,9 @@ async function scanEmails() {
 		emailsStruct.forEach(email => {
 			email.emailIconSpan.classList.remove(DOM_MAP.iconToRemove);
 			email.emailIconSpan.classList.add(DOM_MAP.iconToAdd);
-		});	
+		});
+
+		gptQuery("prompt");
 	}	
 
 }
