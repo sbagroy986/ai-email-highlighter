@@ -17,8 +17,7 @@ def chat():
     try:
         print(request)
         # Request params
-        data = request.form
-
+        data = request.json
         # Extract prompt from request
         prompt = data["prompt"]
 
@@ -26,6 +25,7 @@ def chat():
         api_key = data["api_key"]
 
         response = call_chatgpt(prompt, api_key)
+        print(response)
         return jsonify(response)
     except Exception as e:
         return jsonify({"error": str(e)})
@@ -42,7 +42,7 @@ def call_chatgpt(prompt, api_key, max_tokens=10000):
             {"role": "user", "content": prompt}
           ]
         )
-        return completion.choices[0].message.content
+        return {"response": completion.choices[0].message.content}
     except Exception as e:
         return {"error": str(e)}
 

@@ -21,7 +21,7 @@ const googleDomainParams = ["HSID","SSID","APISID","SAPISID","SEARCH_SAMESITE","
 const mailGoogleDomainParams = ["OSID", "__Secure-OSID", "S", "__Host-GMAIL_SCH_GMN", "__Host-GMAIL_SCH_GMS", "__Host-GMAIL_SCH_GML", "__Host-GMAIL_SCH"];
 
 // openai api key
-const oaiKey = "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";
+const oaiKey = "";
 const proxyUrl = "https://openai-be-proxy-66ad8b45b156.herokuapp.com/chat";
 
 
@@ -152,9 +152,14 @@ function gptQuery(p) {
 	  prompt: prompt
 	};
 
+	const headers = {
+		"Content-Type": "application/json"
+	};
+
 	// Make the POST request to the GPT-3.5 Turbo API
 	fetch(proxyUrl, {
 	  method: "POST",
+	  headers: headers,
 	  body: JSON.stringify(requestData)
 	})
 	  .then(response => {
