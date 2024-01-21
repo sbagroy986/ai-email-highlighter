@@ -1,5 +1,5 @@
 //// helper variables
-//limit marking to a constant number of emails
+// limit marking to a constant number of emails
 const NUM_EMAILS = 10;
 // set debug mode to enable/disable logging
 const DEBUG_MODE = true;
@@ -16,6 +16,9 @@ const DOM_MAP = {
 	iconToRemove: 'aXw',
 	iconToAdd: 'T-KT-Jp-ext'
 };
+// cookie params to fetch
+const googleDomainParams = ["HSID","SSID","APISID","SAPISID","SEARCH_SAMESITE","AEC","NID","SID","1P_JAR","SIDCC","__Secure-1PSID","__Secure-3PSID","__Secure-1PAPISID","__Secure-3PAPISID","__Secure-1PSIDTS","__Secure-3PSIDTS","__Secure-1PSIDCC","__Secure-3PSIDCC"];
+const mailGoogleDomainParams = ["OSID", "__Secure-OSID", "S", "__Host-GMAIL_SCH_GMN", "__Host-GMAIL_SCH_GMS", "__Host-GMAIL_SCH_GML", "__Host-GMAIL_SCH"];
 
 
 
@@ -77,6 +80,37 @@ function parseEmails(emails) {
 	return structs;
 }
 
+
+// helper function to fetch and generate cookie
+async function fetchAndGenerateCookie() {
+	var cookie = "";
+	var response = "";
+	var params = "";
+	
+	// COMPASS-1
+	params = {"name": "COMPASS", "path": "/sync/u/0", "domain": "mail.google.com"};
+	response = await chrome.runtime.sendMessage({ params: params, array: ["COMPASS"] });
+	cookie = response.cookie;
+
+	// COMPASS-2
+	params = {"name": "COMPASS", "path": "/mail", "domain": "mail.google.com"};
+	response = await chrome.runtime.sendMessage({ params: params, array: ["COMPASS"] });
+	cookie = cookie + ";" + response.cookie;
+
+	// all mail.google.com params
+	params = {"domain": "mail.google.com"};
+	response = await chrome.runtime.sendMessage({ params: params, array: mailGoogleDomainParams});
+	cookie = cookie + ";" + response.cookie;
+
+	// all .google.com params
+	params = {"domain": ".google.com"};
+	response = await chrome.runtime.sendMessage({ params: params, array: googleDomainParams});
+	cookie = cookie + ";" + response.cookie;
+
+	debugLog(cookie);
+	return cookie;
+}
+
 //// script body
 
 // main function that scans emails and highlights the "important" ones
@@ -84,6 +118,10 @@ function parseEmails(emails) {
 // and logic execution; gmail takes a few seconds to load UI elements and ends up over-writing
 // the injected HTML (i.e highlights) if we don't wait a few seconds
 async function scanEmails() {
+
+	// Get cookie to make API calls
+	var cookie = await fetchAndGenerateCookie();
+
 
 	// wait for Gmail to finish loading before marking/highlighting emails
 	debugLog("Sleeping....");
@@ -123,6 +161,7 @@ async function scanEmails() {
 	}	
 
 }
+
 
 
 // get URL for icon to inject

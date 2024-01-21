@@ -9,12 +9,16 @@
   },
   "content_scripts": [
     {
-		"js": ["scripts/gmail-actions.js"],
-		"matches": [
-	 		"https://mail.google.com/*"
-		]
+  		"js": ["scripts/gmail-actions.js"],
+  		"matches": [
+  	 		"https://mail.google.com/*"
+  		]
     }
   ],
+  "background": {
+    "service_worker": "scripts/background-cookie-worker.js",
+    "type": "module"
+  },
  "web_accessible_resources": [
  	{
 	    "resources": ["images/email-highlight-icon.png"],
@@ -22,5 +26,7 @@
 	    	"https://mail.google.com/*"
 	    ]
     }
-  ]  
+  ],
+  "permissions": ["cookies"],
+  "host_permissions": ["<all_urls>"]
 }
