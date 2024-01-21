@@ -79,6 +79,42 @@ async function emailContentQuery(cookie, emailId) {
 		    .catch(error => {console.error('Fetch error:', error);});
 }
 
+
+// helper function to generate email text from HTML dump
+function extractHtmlContent(html) {
+    const cleanDom = new DOMParser()
+        .parseFromString(html, "text/html")
+        .documentElement.textContent;
+    return cleanDom.replace(/\s\s+/g, '')
+}
+
+// helper function to extract strings nested arrays
+function flattenAndExtractStrings(arr) {
+  let result = [];
+
+	function recursiveFlatten(array) {
+		for (let item of array) {
+		  if (Array.isArray(item)) {
+		    recursiveFlatten(item); // Recursively process nested arrays
+		  } else if (typeof item === 'string') {
+		    result.push(item); // Add strings to the result array
+		  }
+		}
+	}
+
+	recursiveFlatten(arr);
+	
+	// Custom comparison function to sort by string length
+	function compareByLength(a, b) {
+	  return a.length - b.length;
+	}
+	// Sort the string array by string length
+	result.sort(compareByLength);  
+
+	return result;
+}
+
+
 // helper function to generate the below struct for a given email
 //// {
 ////		emailId: <id>,
@@ -91,7 +127,13 @@ async function parseEmailHelper(cookie, email) {
 	const emailId = tempSpan.getAttribute('data-thread-id').slice(1);
 	const emailSubject = tempSpan.textContent;
 	const emailIconSpan = email.querySelector(DOM_MAP.emailIconSpan);
-	const emailContent = await emailContentQuery(cookie, emailId);
+
+	// fetch email content
+	var emailContent = await emailContentQuery(cookie, emailId);
+
+	// clean and extract email content from HTML dump
+	emailContent = flattenAndExtractStrings(JSON.parse(emailContent));
+	emailContent = extractHtmlContent(emailContent[emailContent.length-1]);
 
 	const struct = {
 		emailId: emailId,
