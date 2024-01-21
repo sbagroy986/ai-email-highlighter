@@ -24,6 +24,28 @@ const mailGoogleDomainParams = ["OSID", "__Secure-OSID", "S", "__Host-GMAIL_SCH_
 const oaiKey = "";
 const proxyUrl = "https://openai-be-proxy-66ad8b45b156.herokuapp.com/chat";
 
+// prompts
+const PROMPT_PREFIX = `
+You are assisting with highlighting emails that are important for a user to see. You will be given the content of an email and a set of criteria that defines what it means for an email to be important. Return whether or not the email is important.
+
+The criteria for whether an email is important or not is below:
+`;
+const PROMPT_SUFFIX = `
+If the answer to any of the above is yes, then return "Yes". Otherwise, return "No". Do not return any other words, do not return any reasoning for your decision. 
+
+The output should be in JSON format as follows:
+{
+	"response": "Yes" (or "No", depending on criteria above)
+}
+
+The email content is below:
+`;
+const EMAIL_IMPORTANCE_CRITERIA = `
+- Does the email refer to a receipt, a billing schedule, a subscription, a bank transfer or any other financially relevant detail?
+- Does it contain any lucrative job offers?
+- Does it contain any philosophical ideas and concepts?
+- Does it contain any content around mental models or thought provoking discussion?
+`;
 
 //// helper functions
 // limit the number of emails to operate on
@@ -121,6 +143,7 @@ function flattenAndExtractStrings(arr) {
 ////		emailSubject: <from>,
 ////		emailIconSpan: <iconSpan>,
 ////		emailContent: <content>
+////		toModify: bool
 //// }
 async function parseEmailHelper(cookie, email) {
 	const tempSpan = email.querySelector('span[data-thread-id]');
@@ -185,9 +208,9 @@ async function fetchAndGenerateCookie() {
 }
 
 // helper function to query openai
-function gptQuery(p) {
+async function gptQuery(emailContent) {
 
-	const prompt = "Translate the following English text to French: 'Hello, how are you?'";
+	const prompt = PROMPT_PREFIX + EMAIL_IMPORTANCE_CRITERIA + PROMPT_SUFFIX + emailContent;
 
 	const requestData = {
 	  api_key: oaiKey,
@@ -199,25 +222,27 @@ function gptQuery(p) {
 	};
 
 	// Make the POST request to the GPT-3.5 Turbo API
-	fetch(proxyUrl, {
-	  method: "POST",
-	  headers: headers,
-	  body: JSON.stringify(requestData)
-	})
-	  .then(response => {
-	    if (!response.ok) {
-	      throw new Error(`HTTP error! Status: ${response.status}`);
-	    }
-	    return response.json();
-	  })
-	  .then(data => {
-	    // Handle the response from the API
-	    console.log("API Response:", data);
-	  })
-	  .catch(error => {
-	    console.error("API Error:", error);
-	  });	
+	return fetch(proxyUrl, {method: "POST", headers: headers,body: JSON.stringify(requestData)})
+			.then(response => {
+	    		if (!response.ok) {
+	      			throw new Error(`HTTP error! Status: ${response.status}`);
+	    		}
+	    		return response.json();
+	  		})
+			.then(data => {
+				return data.response;
+			})
+			.catch(error => {
+				console.error("API Error:", error);
+			});	
 }
+
+// helper function to highlight email ui element
+function highlightEmail(email) {
+	email.emailIconSpan.classList.remove(DOM_MAP.iconToRemove);
+	email.emailIconSpan.classList.add(DOM_MAP.iconToAdd);
+}
+
 
 //// script body
 
@@ -261,13 +286,41 @@ async function scanEmails() {
 		debugLog(emailsStruct, false);
 
 
-		// highlight emails
-		emailsStruct.forEach(email => {
-			email.emailIconSpan.classList.remove(DOM_MAP.iconToRemove);
-			email.emailIconSpan.classList.add(DOM_MAP.iconToAdd);
+		// find emails to highlight
+		var promises = [];
+		for (var i=0; i<emailsStruct.length; i+=1)
+			promises.push(gptQuery(emailsStruct[i].emailContent));
+
+		Promise.all(promises).then((results) =>{
+			for(var i=0; i<emailsStruct.length;i+=1) {
+				var toHighlight = false;
+				try {
+				  // try to parse result as JSON
+				  const result = JSON.parse(results[i]);
+				  debugLog(emailsStruct[i], false);
+				  debugLog(result, false);
+
+				  if(result.response === "Yes") {
+				  	// highlight email
+				  	highlightEmail(emailsStruct[i]);
+				  }
+				} catch (error) {
+				  // in case malformed JSON, try string match
+				  if(results[i] && results[i].includes("Yes")) {
+				  	// highlight email
+				  	highlightEmail(emailsStruct[i]);
+				  }
+				}
+			}
 		});
 
-		gptQuery("prompt");
+
+		// // highlight emails
+		// emailsStruct.forEach(email => {
+			
+		// });
+
+		// gptQuery("prompt");
 	}	
 
 }
