@@ -21,18 +21,26 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
 
   // handle user input message events
-  if (request.type === "userInput") {
-    console.log("User input received with data: " + request.input);
-    chrome.storage.local.set({ userInput: request.input}, function() {
-      console.log('Data stored in chrome.storage');
+  if (request.type === "saveConfig") {
+    const oaiKey = request.oaiKey;
+    const emailCriteria = request.emailCriteria;
+    
+    chrome.storage.local.set({ oaiKey: oaiKey, emailCriteria: emailCriteria}, function() {
     });
   }
 
   // handle reading stored user input
-  if (request.type === "loadUserPreferences") {
-    chrome.storage.local.get(["userInput"].then((result) => {
-      console.log(result.userInput);
-    })); 
+  if (request.type === "loadConfig") {
+    console.log("DOM Reloaded");
+    try {
+      chrome.storage.local.get(["oaiKey", "emailCriteria"], function(result) {
+        sendResponse({oaiKey: result.oaiKey, emailCriteria: result.emailCriteria});
+      });       
+      console.log("Success");
+    } catch {
+      console.log("Failed");
+      sendResponse({oaiKey: null, emailCriteria: null});
+    }
   }
 
   // use async

@@ -5,7 +5,7 @@ const NUM_EMAILS = 10;
 const DEBUG_MODE = true;
 const LOG_PREFIX = "[Extension Log] ";
 // time to sleep
-const SLEEP_TIME_MS = 4000;
+const SLEEP_TIME_MS = 3500;
 // dictionary for DOM elements
 const DOM_MAP = {
 	topLevelTable: '.F.cf.zt',
@@ -20,8 +20,7 @@ const DOM_MAP = {
 const googleDomainParams = ["HSID","SSID","APISID","SAPISID","SEARCH_SAMESITE","AEC","NID","SID","1P_JAR","SIDCC","__Secure-1PSID","__Secure-3PSID","__Secure-1PAPISID","__Secure-3PAPISID","__Secure-1PSIDTS","__Secure-3PSIDTS","__Secure-1PSIDCC","__Secure-3PSIDCC"];
 const mailGoogleDomainParams = ["OSID", "__Secure-OSID", "S", "__Host-GMAIL_SCH_GMN", "__Host-GMAIL_SCH_GMS", "__Host-GMAIL_SCH_GML", "__Host-GMAIL_SCH"];
 
-// openai api key
-const oaiKey = "";
+// proxy endpoint
 const proxyUrl = "https://openai-be-proxy-66ad8b45b156.herokuapp.com/chat";
 
 // prompts
@@ -39,13 +38,6 @@ The output should be in JSON format as follows:
 }
 
 The email content is below:
-`;
-const EMAIL_IMPORTANCE_CRITERIA = `
-- Does the email refer to a receipt, a billing schedule, a subscription, a bank transfer or any other financially relevant detail?
-- Does it contain any lucrative job offers?
-- Does it contain any philosophical ideas and concepts?
-- Does it contain any content around mental models or thought provoking discussion?
-- Does it contain important science news in the fields of nutrition, biology, longevity or physics?
 `;
 
 //// helper functions
@@ -209,9 +201,9 @@ async function fetchAndGenerateCookie() {
 }
 
 // helper function to query openai
-async function gptQuery(emailContent) {
+async function gptQuery(emailContent, oaiKey, emailCriteria) {
 
-	const prompt = PROMPT_PREFIX + EMAIL_IMPORTANCE_CRITERIA + PROMPT_SUFFIX + emailContent;
+	const prompt = PROMPT_PREFIX + emailCriteria + PROMPT_SUFFIX + emailContent;
 
 	const requestData = {
 	  api_key: oaiKey,
@@ -251,7 +243,7 @@ function highlightEmail(email) {
 // needs to be an async function because we need to introduce a delay between extension load
 // and logic execution; gmail takes a few seconds to load UI elements and ends up over-writing
 // the injected HTML (i.e highlights) if we don't wait a few seconds
-async function scanEmails() {
+async function scanEmails(oaiKey, emailCriteria) {
 
 	// Get cookie to make API calls
 	var cookie = await fetchAndGenerateCookie();
@@ -290,7 +282,7 @@ async function scanEmails() {
 		// find emails to highlight
 		var promises = [];
 		for (var i=0; i<emailsStruct.length; i+=1)
-			promises.push(gptQuery(emailsStruct[i].emailContent));
+			promises.push(gptQuery(emailsStruct[i].emailContent, oaiKey, emailCriteria));
 
 		Promise.all(promises).then((results) =>{
 			for(var i=0; i<emailsStruct.length;i+=1) {
@@ -314,16 +306,7 @@ async function scanEmails() {
 				}
 			}
 		});
-
-
-		// // highlight emails
-		// emailsStruct.forEach(email => {
-			
-		// });
-
-		// gptQuery("prompt");
 	}	
-
 }
 
 
@@ -345,5 +328,17 @@ style.textContent = `
 // inject custom style into document
 document.head.appendChild(style);
 
-// execute logic
-scanEmails();
+// Get stored user config
+chrome.runtime.sendMessage({ type: "loadConfig" }, function(response) {
+	const oaiKey = response.oaiKey;
+	const emailCriteria = response.emailCriteria;
+
+	debugLog("Loaded config");
+	// don't execute logic if no OpenAI key provided
+	if (!oaiKey || oaiKey === "") return true;
+
+	debugLog("Executing logic");
+	debugLog(emailCriteria, false);
+	// execute logic
+	scanEmails(oaiKey, emailCriteria);
+});
