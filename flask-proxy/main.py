@@ -44,4 +44,4 @@ def call_chatgpt(prompt, api_key, max_tokens=10000):
         return {"error": str(e)}
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True, port=environ.get("PORT", 5000))
