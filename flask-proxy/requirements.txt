@@ -1,0 +1,5 @@
+# This is a list of Python3 requirements needed to run this Flask server
+
+openai
+flask==1.1.1
+requests
