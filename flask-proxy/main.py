@@ -13,6 +13,7 @@ CHATGPT_API_URL = "https://api.openai.com/v1/engines/gpt-3.5-turbo/completions"
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
+        print(request)
         # Request params
         data = request.form
 
@@ -29,8 +30,7 @@ def chat():
 
 def call_chatgpt(prompt, api_key, max_tokens=10000):
     # Intialize OpenAI client
-    openai.api_key = api_key
-    client = OpenAI()
+    client = OpenAI(api_key=api_key)
 
     try:
         # Use GPT-3.5 Turbo to respond to user prompt
