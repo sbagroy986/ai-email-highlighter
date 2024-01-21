@@ -4,7 +4,7 @@
   "description": "Extension that helps highlight emails you don't want to miss",
   "version": "1.0",
   "action": {
-    "default_popup": "hello-world.html",
+    "default_popup": "popup.html",
     "default_icon": "images/logo.png"
   },
   "content_scripts": [
@@ -21,7 +21,7 @@
   },
  "web_accessible_resources": [
  	{
-	    "resources": ["images/email-highlight-icon.png"],
+	    "resources": ["images/email-highlight-icon.png", "scripts/popup.js"],
 	    "matches":  [
 	    	"https://mail.google.com/*"
 	    ]

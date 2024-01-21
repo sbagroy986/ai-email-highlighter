@@ -186,22 +186,22 @@ async function fetchAndGenerateCookie() {
 	
 	// COMPASS-1
 	params = {"name": "COMPASS", "path": "/sync/u/0", "domain": "mail.google.com"};
-	response = await chrome.runtime.sendMessage({ params: params, array: ["COMPASS"] });
+	response = await chrome.runtime.sendMessage({ params: params, array: ["COMPASS"], "type": "cookie"});
 	cookie = response.cookie;
 
 	// COMPASS-2
 	params = {"name": "COMPASS", "path": "/mail", "domain": "mail.google.com"};
-	response = await chrome.runtime.sendMessage({ params: params, array: ["COMPASS"] });
+	response = await chrome.runtime.sendMessage({ params: params, array: ["COMPASS"], "type": "cookie" });
 	cookie = cookie + ";" + response.cookie;
 
 	// all mail.google.com params
 	params = {"domain": "mail.google.com"};
-	response = await chrome.runtime.sendMessage({ params: params, array: mailGoogleDomainParams});
+	response = await chrome.runtime.sendMessage({ params: params, array: mailGoogleDomainParams, "type": "cookie"});
 	cookie = cookie + ";" + response.cookie;
 
 	// all .google.com params
 	params = {"domain": ".google.com"};
-	response = await chrome.runtime.sendMessage({ params: params, array: googleDomainParams});
+	response = await chrome.runtime.sendMessage({ params: params, array: googleDomainParams, "type": "cookie"});
 	cookie = cookie + ";" + response.cookie;
 
 	debugLog(cookie);
