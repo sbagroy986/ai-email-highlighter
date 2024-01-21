@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Hello Extensions",
-  "description": "Base Level Extension",
+  "name": "AI Email Scanner",
+  "description": "Extension that helps highlight emails you don't want to miss",
   "version": "1.0",
   "action": {
     "default_popup": "hello-world.html",
