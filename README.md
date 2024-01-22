@@ -6,7 +6,7 @@ A Chrome extension built to help highlight emails you don't want to miss. The ex
 ## Capabilities and Usage
 Details on the extension's capabilities and how to use it will be provided shortly.
 
-https://github.com/sbagroy986/ai-email-scanner/blob/main/usage-demo.mov
+![]([my_video.mov](https://github.com/sbagroy986/ai-email-scanner/blob/main/usage-demo.mov))
 
 Press play to see the extension in action.
 
