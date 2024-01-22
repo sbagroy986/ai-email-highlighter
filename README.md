@@ -1,4 +1,4 @@
-# AI Email Scanner
+# AI Email Highlighter
 
 ## Description
 A Chrome extension built to help highlight emails you don't want to miss. The extension aims to manage the overflow of emails, newsletters, and articles that can be overwhelming to sort through. 
