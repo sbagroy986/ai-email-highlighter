@@ -20,8 +20,8 @@ https://github.com/sbagroy986/ai-email-scanner/assets/7946556/fe2c425b-a9ab-496a
 - Now when you oepn Gmal, your last 10 unread emails will automatically be scanned by the extension and the important ones will be highlighted!
 
 ## Technical Design
-- The extension asks for permission to access your Gmail homepage.
-- When you load your homepage, it looks through the HTML/DOM structure of the page to identify unread emails.
+- The extension requires permission to access your Gmail homepage and does majority of the heavy lifting through there.
+- When you load your Gmail homepage, it looks through the HTML/DOM structure of the page to identify unread emails.
 - For these unread emails, it makes AJAX POST requests in the background to fetch the content of each email. This is necessary since the content of the email is not available/loaded in the inbox view.
   - To be able to make the above POST request, the extension extracts Gmail cookies from your browser. It then reconstructs this into the shape that the POST end-point expects and then makes the call. This intermediate step was probably the most painful part of this whole journey.
 - Once the extension has extracted the content of the unread emails, the next task is to query GPT-3.5 with the content of the email, a set of criteria that determines whether an email is important/should be highlighted and an OpenAI API key.
