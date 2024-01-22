@@ -18,6 +18,7 @@ https://github.com/sbagroy986/ai-email-scanner/assets/7946556/fe2c425b-a9ab-496a
 
 ## To-Dos
 - The extension is currently only limited to the last 10 unread emails. A limit was added to prevent excessive OpenAI API usage/costs. This limit should be exposed as a parameter so that the user is able to define how many emails they want scanned in one go.
+- This extension is currently dependent on a Flask intermediate/proxy server (that I set up) hosted on Heroku which facilitates querying OpenAI endpoints. There might be a better architecture in the future that has a lower maintenance and/or cost burden.
 - The extension cannot currently be disabled from the UI. A checkbox should be added in the pop-up UI to allow the user to enable/disable the extension.
 - Allow the user to choose what LLM to be used for scanning emails.
 - Find more robust ways to access Gmail DOM elements and API calls; these are currently brittle and are likely to break in case of any major changes.
