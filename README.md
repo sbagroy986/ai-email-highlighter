@@ -23,7 +23,7 @@ https://github.com/sbagroy986/ai-email-scanner/assets/7946556/fe2c425b-a9ab-496a
 - The extension cannot currently be disabled from the UI. A checkbox should be added in the pop-up UI to allow the user to enable/disable the extension.
 - Allow the user to choose what LLM to be used for scanning emails.
 - Find more robust ways to access Gmail DOM elements and API calls; these are currently brittle and are likely to break in case of any major changes.
-- Improving code modularity and readability.
+- This is the first Chrome extension I have ever built. I was learning how to build while building, so there are a ton of code modularity and readability improvements that need to happen.
 
 ## Personal Note
 This project is stemming from my recent inability to keep up with my personal email account. I receive too many emails, newsletters and articles for me to look through them consistently, and I am hoping this extension can help with some of it. More broadly, this is a small way for me to start tackling the larger problem that modernity/technology has introduced; there is too much information out there, what should I consume?
