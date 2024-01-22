@@ -9,6 +9,7 @@ See the extension in action in the video below.
 https://github.com/sbagroy986/ai-email-scanner/assets/7946556/fe2c425b-a9ab-496a-8dbd-c2e927b4b6af
 
 
+- Clone the repo. Follow this [step](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked) to package the extension logic (in extension-logic/) into an extension that your (Chrome) browser can use.
 - To use the extension, generate your own OpenAI API key from their [portal](https://platform.openai.com/api-keys) and copy it. The extension defaults to using GPT-3.5 Turbo, standard usage rates will apply.
 - Open the extension pop-up UI by clicking on the extension icon (see video).
 - Paste the generated API key in the *OpenAI Key* field. This key is being saved on your local browser storage, the extension does **not** share this key with anyone else nor use it for any other purpose than those described in this app.
