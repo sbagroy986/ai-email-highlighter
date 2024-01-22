@@ -1,3 +1,11 @@
+// move to global vars
+const DEFAULT_CRITERIA = `- Does the email refer to a receipt, a billing schedule, a subscription, a bank transfer or any other financially relevant detail? 
+- Does it contain any lucrative job offers?
+- Does it contain any philosophical ideas and concepts?
+- Does it contain any content around mental models or thought provoking discussion?
+- Does it contain important science news in the fields of nutrition, biology, longevity or physics?
+`;
+
 // background cookie service worker
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     
@@ -22,9 +30,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
   // handle user input message events
   if (request.type === "saveConfig") {
-    const oaiKey = request.oaiKey;
-    const emailCriteria = request.emailCriteria;
+    var oaiKey = request.oaiKey;
+    var emailCriteria = request.emailCriteria;
     
+    // deal with missing email criteria
+    if (!emailCriteria || emailCriteria === "") {
+      emailCriteria = DEFAULT_CRITERIA;
+    }
+
+    // deal with missing OpenAI key
+    if (!oaiKey) {
+      oaiKey = "";
+    }   
+
     chrome.storage.local.set({ oaiKey: oaiKey, emailCriteria: emailCriteria}, function() {
     });
   }
@@ -36,7 +54,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         sendResponse({oaiKey: result.oaiKey, emailCriteria: result.emailCriteria});
       });       
     } catch {
-      sendResponse({oaiKey: null, emailCriteria: null});
+      sendResponse({oaiKey: null, emailCriteria: DEFAULT_CRITERIA});
     }
   }
 
