@@ -9,7 +9,7 @@
   },
   "content_scripts": [
     {
-  		"js": ["scripts/gmailContentScript.js"],
+  		"js": ["scripts/utilsContentScript.js", "scripts/gmailContentScript.js"],
   		"matches": [
   	 		"https://mail.google.com/*"
   		]

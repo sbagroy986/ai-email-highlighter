@@ -31,14 +31,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
   // handle reading stored user input
   if (request.type === "loadConfig") {
-    console.log("DOM Reloaded");
     try {
       chrome.storage.local.get(["oaiKey", "emailCriteria"], function(result) {
         sendResponse({oaiKey: result.oaiKey, emailCriteria: result.emailCriteria});
       });       
-      console.log("Success");
     } catch {
-      console.log("Failed");
       sendResponse({oaiKey: null, emailCriteria: null});
     }
   }
