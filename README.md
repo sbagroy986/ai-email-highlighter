@@ -1,4 +1,4 @@
-# ai-email-scanner
+# AI Email Scanner
 
 ## Description
 A Chrome extension built to help highlight emails you don't want to miss. The extension aims to manage the overflow of emails, newsletters, and articles that can be overwhelming to sort through. 
@@ -7,6 +7,7 @@ A Chrome extension built to help highlight emails you don't want to miss. The ex
 See the extension in action in the video below.
 
 https://github.com/sbagroy986/ai-email-scanner/assets/7946556/fe2c425b-a9ab-496a-8dbd-c2e927b4b6af
+
 
 - To use the extension, generate your own OpenAI API key from their [portal](https://platform.openai.com/api-keys) and copy it. The extension defaults to using GPT-3.5 Turbo, standard usage rates will apply.
 - Open the extension pop-up UI by clicking on the extension icon (see video).
