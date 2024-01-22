@@ -51,7 +51,20 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.type === "loadConfig") {
     try {
       chrome.storage.local.get(["oaiKey", "emailCriteria"], function(result) {
-        sendResponse({oaiKey: result.oaiKey, emailCriteria: result.emailCriteria});
+        var oaiKey = result.oaiKey;
+        var emailCriteria = result.emailCriteria;
+
+        // deal with missing email criteria
+        if(!emailCriteria || emailCriteria === "") {
+          emailCriteria = DEFAULT_CRITERIA;
+        }
+
+        // deal with missing OpenAI key
+        if (!oaiKey) {
+          oaiKey = "";
+        }  
+
+        sendResponse({oaiKey: oaiKey, emailCriteria: emailCriteria});
       });       
     } catch {
       sendResponse({oaiKey: null, emailCriteria: DEFAULT_CRITERIA});
